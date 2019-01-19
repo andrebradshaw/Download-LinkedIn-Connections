@@ -1,6 +1,14 @@
 /*
 watch the build video @ https://youtu.be/3-aSSIG2OVo
 */
+var containArr = [['First Name', 'Last Name', 'Current Job', 'Profile Path', '39char Id', 'Tracking Id', 'Email', 'Phones']]; //csv header as the first item in the first level array
+
+var pages = Math.ceil(parseInt(checker(tn(cn(document, 'mn-connections__header')[0], 'h1')[0], 'text').replace(/\D+/g, ''))/40);
+
+var yourCSRFtoken = "ajax:1299043396168461531";
+
+var time2wait = 12000;
+
 
 function r(s){return s.replace(/,/g, ';')}
 function checker(elm, type) {  if (elm != undefined) {    if (type == 'src') {     return elm.getAttribute('src');    }	if (type == 'click') {     elm.click();    }	if (type == 'href') {      return elm.href;    }    if (type == 'text') {      return elm.innerText.trim().replace(/,/g, '');    }    if (type == 'next') {      return elm;    }  } else {    return '';  }}
@@ -10,9 +18,6 @@ var cn = (ob, nm) => {    return ob.getElementsByClassName(nm)  };
 var tn = (ob, nm) => {    return ob.getElementsByTagName(nm)  };
 function cleanName(fullname) {    var regXcommaplus = new RegExp(",.+");    var regXjunk = new RegExp('\\(|\\)|"|\\s*\\b[jJ][rR]\\b.*|\\s*\\b[sS][rR]\\b.*|\\s*\\bIi\\b.*|\\s*\\bI[Ii][Ii]\\b.*|\\s*\\bI[Vv]\\b.*|\\s+$', 'g');    var regXendDot = new RegExp("\\.$");    return fullname.replace(regXcommaplus, "").replace(regXjunk, "").replace(regXendDot, "");  }
 function fixCase(fullname) {    return fullname.replace(/\w\S*/g, function(txt) {      return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();    });  }
-
-var time2wait = 12000;
-var pages = Math.ceil(parseInt(checker(tn(cn(document, 'mn-connections__header')[0], 'h1')[0], 'text').replace(/\D+/g, ''))/40);
 
 
 function downloadr(dat, filename, type) {
@@ -57,7 +62,7 @@ console.log('getting info for '+ fn + ' ' + ln + ', ' + pid)
           "headers": {
             "accept": "application/vnd.linkedin.normalized+json+2.1",
             "accept-language": "en-US,en;q=0.9",
-            "csrf-token": "ajax:1299043396168461531",
+            "csrf-token": yourCSRFtoken,
             "x-li-lang": "en_US",
             "x-li-page-instance": "urn:li:page:d_flagship3_profile_view_base_contact_details;WgvdNFDNQf+vEf/i9IIlHw==",
             "x-li-track": "{\"clientVersion\":\"1.2.6128\",\"osName\":\"web\",\"timezoneOffset\":-5,\"deviceFormFactor\":\"DESKTOP\",\"mpName\":\"voyager-web\"}",
@@ -97,8 +102,6 @@ function parseContact(type,obj){
     }
 }
 
-var containArr = [];
-
 function getConnections(n) {
   var rando = Math.round(Math.random() * 100);
   var start = n*40;
@@ -109,7 +112,7 @@ function getConnections(n) {
         "headers": {
           "accept": "application/vnd.linkedin.normalized+json+2.1",
           "accept-language": "en-US,en;q=0.9",
-          "csrf-token": "ajax:1299043396168461531",
+          "csrf-token": yourCSRFtoken,
           "x-li-lang": "en_US",
           "x-li-page-instance": "urn:li:page:d_flagship3_people_connections;vz0YKnqaSuWtzlVxHdCPHw==",
           "x-li-track": "{\"clientVersion\":\"1.2.6128\",\"osName\":\"web\",\"timezoneOffset\":-5,\"deviceFormFactor\":\"DESKTOP\",\"mpName\":\"voyager-web\"}",
