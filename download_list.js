@@ -1,15 +1,17 @@
 /*
 watch the build video @ https://youtu.be/3-aSSIG2OVo
-*/
+
+This script needs to be run here: https://www.linkedin.com/mynetw…/invite-connect/connections/
+
 var containArr = [['First Name', 'Last Name', 'Current Job', 'Email', 'Phones', 'Profile Path', '39char Id', 'Tracking Id']]; //csv header as the first item in the first level array
 
+*/
+var containArr = [['First Name', 'Last Name', 'Current Job', 'Email', 'Phones', 'Profile Path', '39char Id', 'Tracking Id']]; //csv header as the first item in the first level array
+var time2wait = 12000;
 var pages = Math.ceil(parseInt(checker(tn(cn(document, 'mn-connections__header')[0], 'h1')[0], 'text').replace(/\D+/g, ''))/40);
-
 var yourCSRFtoken = "ajax:1299043396168461531";
 
-var time2wait = 12000;
-
-
+//Utilities
 function r(s){return s.replace(/,/g, ';')}
 function checker(elm, type) {  if (elm != undefined) {    if (type == 'src') {     return elm.getAttribute('src');    }	if (type == 'click') {     elm.click();    }	if (type == 'href') {      return elm.href;    }    if (type == 'text') {      return elm.innerText.trim().replace(/,/g, '');    }    if (type == 'next') {      return elm;    }  } else {    return '';  }}
 function reg(elm, n){if(elm != null){return elm[n];}else{return '';}}
@@ -19,7 +21,7 @@ var tn = (ob, nm) => {    return ob.getElementsByTagName(nm)  };
 function cleanName(fullname) {    var regXcommaplus = new RegExp(",.+");    var regXjunk = new RegExp('\\(|\\)|"|\\s*\\b[jJ][rR]\\b.*|\\s*\\b[sS][rR]\\b.*|\\s*\\bIi\\b.*|\\s*\\bI[Ii][Ii]\\b.*|\\s*\\bI[Vv]\\b.*|\\s+$', 'g');    var regXendDot = new RegExp("\\.$");    return fullname.replace(regXcommaplus, "").replace(regXjunk, "").replace(regXendDot, "");  }
 function fixCase(fullname) {    return fullname.replace(/\w\S*/g, function(txt) {      return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();    });  }
 
-
+//takes a 2-demensional array and downloads it as a csv
 function downloadr(dat, filename, type) {
   var data = dat.map(itm => {
     return itm.toString().replace(/$/, '\r');
@@ -43,8 +45,20 @@ function downloadr(dat, filename, type) {
   }
 }
 
+function parseContact(type, obj) {
+  if (type == 'email') {
+    if (obj.emailAddress != undefined) {      return obj.emailAddress;    } 
+	else {      return '';    }
+  }
+  if (type == 'phone') {
+    var ph = '';
+    if (obj.phoneNumbers != undefined) {      for (o = 0; o < obj.phoneNumbers.length; o++) {        var ph = ph + obj.phoneNumbers[o].number + '; ';      }
+    }
+    return ph;
+  }
+}
 
-
+//processes the response from the initial request; requests a contact record for each of the 40 responses and pushes the record into an array as an array 
 function processResponse(obj,n) {
   var rando = Math.round(Math.random() * 100);
   setTimeout(() => {
@@ -56,7 +70,8 @@ function processResponse(obj,n) {
       var uid = reg(/.{39}$/.exec(obj.entityUrn), 0);
       var tid = obj.trackingId;
 
-console.log('getting info for '+ fn + ' ' + ln + ', ' + pid)
+	console.log('getting info for '+ fn + ' ' + ln + ', ' + pid);
+
       fetch("https://www.linkedin.com/voyager/api/identity/profiles/" + pid + "/profileContactInfo", {
           "credentials": "include",
           "headers": {
@@ -78,28 +93,13 @@ console.log('getting info for '+ fn + ' ' + ln + ', ' + pid)
           return res.json()
         })
         .then(jdat => {
-			var email = parseContact('email',jdat.data);
-			var phones = parseContact('phone',jdat.data);
-			containArr.push([fn, ln, job, email, phones, pid, uid, tid])
+	  var email = parseContact('email',jdat.data);
+	  var phones = parseContact('phone',jdat.data);
+	  containArr.push([fn, ln, job, email, phones, pid, uid, tid])
         })
     }
   }, ((n) * time2wait) + rando);
 
-}
-
-function parseContact(type,obj){
-	if(type == 'email'){
-		if(obj.emailAddress != undefined){			return obj.emailAddress;		}else{			return '';        }
-    }
-	if(type == 'phone'){
-		var ph = '';
-		if(obj.phoneNumbers != undefined){
-			for(o=0; o<obj.phoneNumbers.length; o++){
-				var ph = ph + obj.phoneNumbers[o].number + '; '
-			}
-		}
-		return ph;
-    }
 }
 
 function getConnections(n) {
@@ -129,20 +129,25 @@ function getConnections(n) {
       })
       .then(jdat => {
         var itm = jdat.included;
-		for(i=0; i<itm.length; i++){
-			processResponse(itm[i], i)
-		}
+	for(i=0; i<itm.length; i++){
+		processResponse(itm[i], i)
+	}
       })
   }, ((n) * (time2wait*40)) + rando)
 }
 
-setTimeout(()=>{
-	downloadr(containArr, 'mynetwork.csv', 'data:text/plain;charset=utf-8,')
-},(time2wait*(pages*40))+(time2wait*40));
+if(/linkedin\.com\/mynetwork\/invite-connect\/connections/.test(window.location.href) === true){
 
+	setTimeout(()=>{
+		downloadr(containArr, 'mynetwork.csv', 'data:text/plain;charset=utf-8,')
+	},(time2wait*(pages*40))+(time2wait*40));
 
-for(p=0; p<pages; p++){
-	getConnections(p)
+	for(p=0; p<pages; p++){
+		getConnections(p)
+	}
+	console.log('this will take about '+ Math.round(((((pages*40)*(time2wait/1000))/60)/60)/10)*10 + ' hours to complete')
+
+} else {
+	alert('please go to to linkedin.com/mynetwork/invite-connect/connections \n and run this code')
 }
 
-console.log('this will take about '+ Math.round(((((pages*40)*(time2wait/1000))/60)/60)/10)*10 + ' hours to complete')
