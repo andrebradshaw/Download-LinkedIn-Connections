@@ -1,5 +1,3 @@
-
-
 function r(s){return s.replace(/,/g, ';')}
 function checker(elm, type) {  if (elm != undefined) {    if (type == 'src') {     return elm.getAttribute('src');    }	if (type == 'click') {     elm.click();    }	if (type == 'href') {      return elm.href;    }    if (type == 'text') {      return elm.innerText.trim().replace(/,/g, '');    }    if (type == 'next') {      return elm;    }  } else {    return '';  }}
 function reg(elm, n){if(elm != null){return elm[n];}else{return '';}}
@@ -42,13 +40,8 @@ console.log('getting info for '+ fn + ' ' + ln + ', ' + pid)
           return res.json()
         })
         .then(jdat => {
-			var email = jdat.data.emailAddress;
-			var phones = '';
-			if(jdat.data.phoneNumbers != undefined){
-			 for(o=0; o<jdat.data.phoneNumbers.length; o++){
-				var phones = phones + jdat.data.phoneNumbers[o].number + '; '
-             }
-            }
+			var email = parseContact('email',jdat.data);
+			var phones = parseContact('phone',jdat.data);
 			containArr.push([fn, ln, job, pid, uid, tid, email, phones])
         })
     }
@@ -56,6 +49,20 @@ console.log('getting info for '+ fn + ' ' + ln + ', ' + pid)
 
 }
 
+function parseContact(type,obj){
+	if(type == 'email'){
+		if(obj.emailAddress != undefined){			return obj.emailAddress;		}else{			return '';        }
+    }
+	if(type == 'phone'){
+		var ph = '';
+		if(obj.phoneNumbers != undefined){
+			for(o=0; o<obj.phoneNumbers.length; o++){
+				var ph = ph + obj.phoneNumbers[o].number + '; '
+			}
+		}
+		return ph;
+    }
+}
 
 var containArr = [];
 
