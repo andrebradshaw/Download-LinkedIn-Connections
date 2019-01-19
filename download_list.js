@@ -7,6 +7,8 @@ var tn = (ob, nm) => {    return ob.getElementsByTagName(nm)  };
 function cleanName(fullname) {    var regXcommaplus = new RegExp(",.+");    var regXjunk = new RegExp('\\(|\\)|"|\\s*\\b[jJ][rR]\\b.*|\\s*\\b[sS][rR]\\b.*|\\s*\\bIi\\b.*|\\s*\\bI[Ii][Ii]\\b.*|\\s*\\bI[Vv]\\b.*|\\s+$', 'g');    var regXendDot = new RegExp("\\.$");    return fullname.replace(regXcommaplus, "").replace(regXjunk, "").replace(regXendDot, "");  }
 function fixCase(fullname) {    return fullname.replace(/\w\S*/g, function(txt) {      return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();    });  }
 
+var time2wait = 12000;
+
 function processResponse(obj,n) {
   var rando = Math.round(Math.random() * 100);
   setTimeout(() => {
@@ -45,7 +47,7 @@ console.log('getting info for '+ fn + ' ' + ln + ', ' + pid)
 			containArr.push([fn, ln, job, pid, uid, tid, email, phones])
         })
     }
-  }, ((n) * 12000) + rando);
+  }, ((n) * time2wait) + rando);
 
 }
 
@@ -97,7 +99,7 @@ function getConnections(n) {
 			processResponse(itm[i], i)
 		}
       })
-  }, ((n) * (12000*40)) + rando)
+  }, ((n) * (time2wait*40)) + rando)
 }
 
 var pages = Math.ceil(parseInt(checker(tn(cn(document, 'mn-connections__header')[0], 'h1')[0], 'text').replace(/\D+/g, ''))/40);
@@ -105,3 +107,5 @@ var pages = Math.ceil(parseInt(checker(tn(cn(document, 'mn-connections__header')
 for(p=0; p<pages; p++){
 	getConnections(p)
 }
+
+console.log('this will take about '+ Math.round(((((pages*40)*(time2wait/1000))/60)/60)/10)*10 + ' hours to complete')
