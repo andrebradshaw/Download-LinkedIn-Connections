@@ -1,7 +1,7 @@
 /*
 watch the build video @ https://youtu.be/3-aSSIG2OVo
 */
-var containArr = [['First Name', 'Last Name', 'Current Job', 'Profile Path', '39char Id', 'Tracking Id', 'Email', 'Phones']]; //csv header as the first item in the first level array
+var containArr = [['First Name', 'Last Name', 'Current Job', 'Email', 'Phones', 'Profile Path', '39char Id', 'Tracking Id']]; //csv header as the first item in the first level array
 
 var pages = Math.ceil(parseInt(checker(tn(cn(document, 'mn-connections__header')[0], 'h1')[0], 'text').replace(/\D+/g, ''))/40);
 
@@ -80,7 +80,7 @@ console.log('getting info for '+ fn + ' ' + ln + ', ' + pid)
         .then(jdat => {
 			var email = parseContact('email',jdat.data);
 			var phones = parseContact('phone',jdat.data);
-			containArr.push([fn, ln, job, pid, uid, tid, email, phones])
+			containArr.push([fn, ln, job, email, phones, pid, uid, tid])
         })
     }
   }, ((n) * time2wait) + rando);
