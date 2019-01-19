@@ -9,28 +9,59 @@ var tn = (ob, nm) => {    return ob.getElementsByTagName(nm)  };
 function cleanName(fullname) {    var regXcommaplus = new RegExp(",.+");    var regXjunk = new RegExp('\\(|\\)|"|\\s*\\b[jJ][rR]\\b.*|\\s*\\b[sS][rR]\\b.*|\\s*\\bIi\\b.*|\\s*\\bI[Ii][Ii]\\b.*|\\s*\\bI[Vv]\\b.*|\\s+$', 'g');    var regXendDot = new RegExp("\\.$");    return fullname.replace(regXcommaplus, "").replace(regXjunk, "").replace(regXendDot, "");  }
 function fixCase(fullname) {    return fullname.replace(/\w\S*/g, function(txt) {      return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();    });  }
 
+function processResponse(obj,n) {
+  var rando = Math.round(Math.random() * 100);
+  setTimeout(() => {
+    if (obj.firstName != null) {
+      var fn = r(fixCase(cleanName(obj.firstName)));
+      var ln = r(fixCase(cleanName(obj.lastName)));
+      var job = r(obj.occupation);
+      var pid = obj.publicIdentifier;
+      var uid = reg(/.{39}$/.exec(obj.entityUrn), 0);
+      var tid = obj.trackingId;
 
-function processResponse(obj){
-	var arr = [];
-	for(i=0; i<obj.length; i++){
-		if(obj[i].firstName != null){
-			var fn = r(fixCase(cleanName(obj[i].firstName)));
-			var ln = r(fixCase(cleanName(obj[i].lastName)));
-			var job = r(obj[i].occupation);
-			var pid = obj[i].publicIdentifier;
-			var uid = reg(/.{39}$/.exec(obj[i].entityUrn),0);
-			var tid = obj[i].trackingId;
-			arr.push([fn,ln,job,pid,uid,tid])
-        }
-	}
-	return arr;
+console.log('getting info for '+ fn + ' ' + ln + ', ' + pid)
+      fetch("https://www.linkedin.com/voyager/api/identity/profiles/" + pid + "/profileContactInfo", {
+          "credentials": "include",
+          "headers": {
+            "accept": "application/vnd.linkedin.normalized+json+2.1",
+            "accept-language": "en-US,en;q=0.9",
+            "csrf-token": "ajax:1299043396168461531",
+            "x-li-lang": "en_US",
+            "x-li-page-instance": "urn:li:page:d_flagship3_profile_view_base_contact_details;WgvdNFDNQf+vEf/i9IIlHw==",
+            "x-li-track": "{\"clientVersion\":\"1.2.6128\",\"osName\":\"web\",\"timezoneOffset\":-5,\"deviceFormFactor\":\"DESKTOP\",\"mpName\":\"voyager-web\"}",
+            "x-restli-protocol-version": "2.0.0"
+          },
+          "referrer": "https://www.linkedin.com/in/" + pid + "/",
+          "referrerPolicy": "no-referrer-when-downgrade",
+          "body": null,
+          "method": "GET",
+          "mode": "cors"
+        })
+        .then(res => {
+          return res.json()
+        })
+        .then(jdat => {
+			var email = jdat.data.emailAddress;
+			var phones = '';
+			if(jdat.data.phoneNumbers != undefined){
+			 for(o=0; o<jdat.data.phoneNumbers.length; o++){
+				var phones = phones + jdat.data.phoneNumbers[o].number + '; '
+             }
+            }
+			containArr.push([fn, ln, job, pid, uid, tid, email, phones])
+        })
+    }
+  }, ((n) * 12000) + rando);
+
 }
+
 
 var containArr = [];
 
 function getConnections(n) {
   var rando = Math.round(Math.random() * 100);
-  var start = p*40;
+  var start = n*40;
   
   setTimeout(() => {
     fetch("https://www.linkedin.com/voyager/api/relationships/connections?start="+start+"&count=40&sortType=RECENTLY_ADDED", {
@@ -54,9 +85,12 @@ function getConnections(n) {
         return res.json();
       })
       .then(jdat => {
-        containArr.push(processResponse(jdat.included))
+        var itm = jdat.included;
+		for(i=0; i<itm.length; i++){
+			processResponse(itm[i], i)
+		}
       })
-  }, ((n) * 5000) + rando)
+  }, ((n) * (12000*40)) + rando)
 }
 
 var pages = Math.ceil(parseInt(checker(tn(cn(document, 'mn-connections__header')[0], 'h1')[0], 'text').replace(/\D+/g, ''))/40);
