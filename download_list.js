@@ -1,14 +1,23 @@
 /*
-watch the build video @ https://youtu.be/3-aSSIG2OVo
+- WARNING -
+This script will perform ajax requests. A request is sent for each of your connection. 
+LinkedIn monitors users actions, and a few hundred page views within an hour can and likely will get you temp banned. 
+While these are not page views, I am not willing to test the difference in LinkedIns monitoring. 
+Please let me know if you decided to test the boundaries.
+You can change the time2wait variable to speed up the operation, but do this with caution. 
 
-This script needs to be run here: https://www.linkedin.com/mynetw…/invite-connect/connections/
+-Watch the build video @ https://youtu.be/3-aSSIG2OVo
 
-var containArr = [['First Name', 'Last Name', 'Current Job', 'Email', 'Phones', 'Profile Path', '39char Id', 'Tracking Id']]; //csv header as the first item in the first level array
-
+-This script needs to be run here: https://www.linkedin.com/mynetw…/invite-connect/connections/
 */
-var containArr = [['First Name', 'Last Name', 'Current Job', 'Email', 'Phones', 'Profile Path', '39char Id', 'Tracking Id']]; //csv header as the first item in the first level array
-var time2wait = 12000;
+
+var time2wait = 12000; //milliseconds
+
+//csv header as the first item in the first level array
+var containArr = [['First Name', 'Last Name', 'Current Job', 'Email', 'Phones', 'Profile Path', '39char Id', 'Tracking Id']];
+
 var pages = Math.ceil(parseInt(checker(tn(cn(document, 'mn-connections__header')[0], 'h1')[0], 'text').replace(/\D+/g, ''))/40);
+
 var yourCSRFtoken = "ajax:1299043396168461531";
 
 //Utilities
