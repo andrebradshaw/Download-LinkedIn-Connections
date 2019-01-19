@@ -1,3 +1,7 @@
+/*
+watch the build video @ https://youtu.be/3-aSSIG2OVo
+*/
+
 function r(s){return s.replace(/,/g, ';')}
 function checker(elm, type) {  if (elm != undefined) {    if (type == 'src') {     return elm.getAttribute('src');    }	if (type == 'click') {     elm.click();    }	if (type == 'href') {      return elm.href;    }    if (type == 'text') {      return elm.innerText.trim().replace(/,/g, '');    }    if (type == 'next') {      return elm;    }  } else {    return '';  }}
 function reg(elm, n){if(elm != null){return elm[n];}else{return '';}}
