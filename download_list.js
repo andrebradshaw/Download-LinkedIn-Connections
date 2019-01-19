@@ -8,6 +8,33 @@ function cleanName(fullname) {    var regXcommaplus = new RegExp(",.+");    var 
 function fixCase(fullname) {    return fullname.replace(/\w\S*/g, function(txt) {      return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();    });  }
 
 var time2wait = 12000;
+var pages = Math.ceil(parseInt(checker(tn(cn(document, 'mn-connections__header')[0], 'h1')[0], 'text').replace(/\D+/g, ''))/40);
+
+
+function downloadr(dat, filename, type) {
+  var data = dat.map(itm => {
+    return itm.toString().replace(/$/, '\r');
+  }).toString().replace(/\r,/g, '\r');
+  var file = new Blob([data], {
+    type: type
+  });
+  if (window.navigator.msSaveOrOpenBlob) {
+    window.navigator.msSaveOrOpenBlob(file, filename);
+  } else {
+    var a = document.createElement("a"),
+      url = URL.createObjectURL(file);
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => {
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    }, 10);
+  }
+}
+
+
 
 function processResponse(obj,n) {
   var rando = Math.round(Math.random() * 100);
@@ -102,7 +129,10 @@ function getConnections(n) {
   }, ((n) * (time2wait*40)) + rando)
 }
 
-var pages = Math.ceil(parseInt(checker(tn(cn(document, 'mn-connections__header')[0], 'h1')[0], 'text').replace(/\D+/g, ''))/40);
+setTimeout(()=>{
+	downloadr(containArr, 'mynetwork.csv', 'data:text/plain;charset=utf-8,')
+},(time2wait*(pages*40))+(time2wait*40));
+
 
 for(p=0; p<pages; p++){
 	getConnections(p)
