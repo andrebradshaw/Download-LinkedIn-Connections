@@ -1,6 +1,6 @@
 /*
 - WARNING -
-This script will perform ajax requests. A request is sent for each of your connection. 
+This script will perform ajax requests. A request is sent for each of your connections. 
 LinkedIn monitors users actions, and a few hundred page views within an hour can and likely will get you temp banned. 
 While these are not page views, I am not willing to test the difference in LinkedIns monitoring. 
 Please let me know if you decided to test the boundaries.
