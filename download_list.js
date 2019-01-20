@@ -10,15 +10,7 @@ You can change the time2wait variable to speed up the operation, but do this wit
 
 -This script needs to be run here: https://www.linkedin.com/mynetw…/invite-connect/connections/
 */
-
-var time2wait = 12000; //milliseconds
-
-//csv header as the first item in the first level array
-var containArr = [['First Name', 'Last Name', 'Current Job', 'Email', 'Phones', 'Profile Path', '39char Id', 'Tracking Id']];
-
-var pages = Math.ceil(parseInt(checker(tn(cn(document, 'mn-connections__header')[0], 'h1')[0], 'text').replace(/\D+/g, ''))/40);
-
-var yourCSRFtoken = "ajax:1299043396168461531";
+var yourCSRFtoken = "ajax:YOUR_token_here"; 
 
 //Utilities
 function r(s){return s.replace(/,/g, ';')}
@@ -29,6 +21,13 @@ var cn = (ob, nm) => {    return ob.getElementsByClassName(nm)  };
 var tn = (ob, nm) => {    return ob.getElementsByTagName(nm)  };
 function cleanName(fullname) {    var regXcommaplus = new RegExp(",.+");    var regXjunk = new RegExp('\\(|\\)|"|\\s*\\b[jJ][rR]\\b.*|\\s*\\b[sS][rR]\\b.*|\\s*\\bIi\\b.*|\\s*\\bI[Ii][Ii]\\b.*|\\s*\\bI[Vv]\\b.*|\\s+$', 'g');    var regXendDot = new RegExp("\\.$");    return fullname.replace(regXcommaplus, "").replace(regXjunk, "").replace(regXendDot, "");  }
 function fixCase(fullname) {    return fullname.replace(/\w\S*/g, function(txt) {      return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();    });  }
+
+var time2wait = 12000; //milliseconds
+//csv header as the first item in the first level array
+var containArr = [['First Name', 'Last Name', 'Current Job', 'Email', 'Phones', 'Profile Path', '39char Id', 'Tracking Id']];
+var pages = Math.ceil(parseInt(checker(tn(cn(document, 'mn-connections__header')[0], 'h1')[0], 'text').replace(/\D+/g, ''))/40);
+
+
 
 //takes a 2-demensional array and downloads it as a csv
 function downloadr(dat, filename, type) {
