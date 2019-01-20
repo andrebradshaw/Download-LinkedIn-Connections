@@ -8,7 +8,9 @@ You can change the time2wait variable to speed up the operation, but do this wit
 
 -Watch the build video @ https://youtu.be/3-aSSIG2OVo
 
--This script needs to be run here: https://www.linkedin.com/mynetw…/invite-connect/connections/
+-This script needs to be run here: https://www.linkedin.com/mynetwork/invite-connect/connections/
+
+-Be sure to switch out your CSRF token. 
 */
 var yourCSRFtoken = "ajax:YOUR_token_here"; 
 
